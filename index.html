@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuph Akidaki Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #070a12;
+    --bg-card: #0d1420;
+    --line: #1c2536;
+    --cyan: #00f0d8;
+    --violet: #7c3aed;
+    --text: #e8ecf3;
+    --dim: #7c8aa3;
+    --green: #39ff88;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(0,240,216,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,240,216,0.035) 1px, transparent 1px);
+    background-size: 42px 42px;
+    pointer-events:none;
+    z-index:0;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 40%, transparent 90%);
+  }
+  a{color:inherit; text-decoration:none;}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 6vw;
+    background:rgba(7,10,18,0.75);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    font-size:1.15rem;
+    letter-spacing:0.06em;
+    color:var(--text);
+  }
+  .logo span{color:var(--cyan);}
+  .nav-links{display:flex; gap:28px; font-size:0.85rem; color:var(--dim);}
+  .nav-links a:hover{color:var(--cyan);}
+  .nav-cta{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    padding:9px 16px;
+    border:1px solid var(--cyan);
+    border-radius:4px;
+    color:var(--cyan);
+    white-space:nowrap;
+  }
+  .nav-cta:hover{background:var(--cyan); color:#04110f;}
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    position:relative; z-index:1;
+    min-height:88vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding:60px 6vw 40px;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.8rem;
+    color:var(--green);
+    display:flex; align-items:center; gap:8px;
+    margin-bottom:22px;
+  }
+  .dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 8px var(--green);
+    animation:pulse 1.6s infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+  h1{
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    font-size:clamp(2.4rem, 7vw, 5rem);
+    line-height:1.05;
+    letter-spacing:0.01em;
+    background:linear-gradient(180deg, #ffffff 20%, var(--cyan) 120%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    text-shadow:0 0 40px rgba(0,240,216,0.25);
+    max-width:14ch;
+  }
+  .hero-sub{
+    margin-top:22px;
+    max-width:540px;
+    color:var(--dim);
+    font-size:1.02rem;
+    line-height:1.6;
+  }
+  .terminal-line{
+    margin-top:34px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.95rem;
+    color:var(--cyan);
+    min-height:1.4em;
+  }
+  .terminal-line::after{
+    content:"█";
+    margin-left:2px;
+    animation:blink 1s step-end infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
+  .hero-actions{
+    margin-top:38px;
+    display:flex; gap:16px; flex-wrap:wrap; justify-content:center;
+  }
+  .btn-primary, .btn-ghost{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.9rem;
+    padding:14px 26px;
+    border-radius:6px;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg, var(--cyan), var(--violet));
+    color:#04110f;
+    font-weight:700;
+    box-shadow:0 0 30px rgba(0,240,216,0.25);
+  }
+  .btn-primary:hover{filter:brightness(1.1); transform:translateY(-1px);}
+  .btn-ghost{
+    border:1px solid var(--line);
+    color:var(--text);
+  }
+  .btn-ghost:hover{border-color:var(--cyan); color:var(--cyan);}
+
+  /* ---------- SECTION LABELS ---------- */
+  .section{
+    position:relative; z-index:1;
+    padding:90px 6vw;
+    max-width:1180px;
+    margin:0 auto;
+  }
+  .section-head{
+    display:flex; align-items:baseline; gap:14px;
+    margin-bottom:44px;
+  }
+  .section-head .idx{
+    font-family:'JetBrains Mono', monospace;
+    color:var(--violet);
+    font-size:0.85rem;
+  }
+  .section-head h2{
+    font-family:'Orbitron', sans-serif;
+    font-size:clamp(1.4rem, 3vw, 2rem);
+    letter-spacing:0.02em;
+  }
+  .section-head .rule{
+    flex:1; height:1px;
+    background:linear-gradient(90deg, var(--line), transparent);
+  }
+
+  /* ---------- PRODUCT GRID ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    gap:20px;
+  }
+  .card{
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:22px 22px 20px;
+    font-family:'JetBrains Mono', monospace;
+    position:relative;
+    overflow:hidden;
+    transition:border-color 0.25s, transform 0.25s;
+  }
+  .card::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, var(--cyan), var(--violet));
+    opacity:0; transition:opacity 0.25s;
+  }
+  .card:hover{border-color:rgba(0,240,216,0.4); transform:translateY(-3px);}
+  .card:hover::before{opacity:1;}
+  .card .cmd{
+    color:var(--dim); font-size:0.72rem; margin-bottom:10px;
+  }
+  .card .cmd span{color:var(--green);}
+  .card h3{
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:1.05rem;
+    color:var(--text);
+    margin-bottom:8px;
+  }
+  .card p.desc{
+    font-family:'Inter', sans-serif;
+    color:var(--dim);
+    font-size:0.85rem;
+    line-height:1.5;
+    margin-bottom:16px;
+  }
+  .card .price{
+    font-size:0.82rem;
+    color:var(--cyan);
+    margin-bottom:16px;
+    display:block;
+  }
+  .card .order-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:0.78rem;
+    color:var(--bg);
+    background:var(--cyan);
+    padding:9px 14px;
+    border-radius:5px;
+    font-weight:700;
+  }
+  .card .order-btn:hover{background:var(--green);}
+
+  /* ---------- FEATURED: SEWA BOT ---------- */
+  .card.featured{
+    grid-column: 1 / -1;
+    border-color:rgba(0,240,216,0.35);
+    background:linear-gradient(160deg, var(--bg-card) 60%, rgba(124,58,237,0.08));
+    padding:28px 28px 26px;
+  }
+  .card.featured::before{opacity:1;}
+  .featured-top{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    margin-bottom:6px;
+  }
+  .featured-top .badge{
+    font-size:0.68rem;
+    background:rgba(0,240,216,0.12);
+    color:var(--cyan);
+    border:1px solid rgba(0,240,216,0.3);
+    padding:3px 9px;
+    border-radius:20px;
+    letter-spacing:0.04em;
+  }
+  .featured-body{
+    display:grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap:28px;
+    margin-top:18px;
+  }
+  @media (max-width:720px){
+    .featured-body{grid-template-columns:1fr;}
+  }
+  .price-list{
+    list-style:none;
+    display:flex; flex-direction:column; gap:0;
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .price-list li{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:11px 16px;
+    font-size:0.85rem;
+    border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,0.015);
+  }
+  .price-list li:last-child{border-bottom:none;}
+  .price-list li.hot{
+    background:rgba(0,240,216,0.06);
+  }
+  .price-list li .dur{color:var(--text);}
+  .price-list li .amt{color:var(--cyan); font-weight:700;}
+  .price-list li.hot .amt{color:var(--green);}
+  .group-note{
+    margin-top:14px;
+    font-size:0.78rem;
+    color:var(--dim);
+    padding:12px 14px;
+    border:1px dashed var(--line);
+    border-radius:8px;
+  }
+  .group-note b{color:var(--violet);}
+  .feature-list{
+    list-style:none;
+    display:flex; flex-direction:column; gap:9px;
+  }
+  .feature-list li{
+    font-size:0.85rem;
+    color:var(--text);
+    display:flex; gap:9px; align-items:baseline;
+  }
+  .feature-list li::before{
+    content:"✦";
+    color:var(--cyan);
+    font-size:0.75rem;
+  }
+  .featured-tagline{
+    margin-top:20px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    font-size:0.8rem;
+    color:var(--dim);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+  .featured-tagline span{color:var(--cyan);}
+
+  .single-price{
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:18px;
+    text-align:center;
+    background:rgba(0,240,216,0.04);
+  }
+  .single-price .amt{
+    font-family:'Orbitron', sans-serif;
+    font-size:1.8rem;
+    color:var(--cyan);
+    font-weight:900;
+  }
+  .single-price .perk{
+    display:block;
+    font-size:0.78rem;
+    color:var(--text);
+    margin-top:8px;
+  }
+  .addon-box{
+    margin-top:14px;
+    border:1px dashed var(--line);
+    border-radius:8px;
+    padding:14px;
+  }
+  .addon-box .addon-title{
+    font-size:0.78rem;
+    color:var(--violet);
+    margin-bottom:8px;
+    display:block;
+  }
+  .addon-box .addon-item{
+    font-size:0.82rem;
+    color:var(--text);
+    margin-bottom:4px;
+  }
+  .addon-box .addon-item .sub{
+    display:block;
+    color:var(--dim);
+    font-size:0.75rem;
+    margin-left:14px;
+  }
+  .trust-row{
+    display:flex; gap:10px; flex-wrap:wrap;
+    margin-top:16px;
+  }
+  .trust-row .chip{
+    font-size:0.75rem;
+    color:var(--dim);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:6px 12px;
+  }
+  .feature-list.two-col{
+    columns:2;
+    gap:16px;
+  }
+  .feature-list.two-col li{margin-bottom:9px; break-inside:avoid;}
+  @media (max-width:520px){
+    .feature-list.two-col{columns:1;}
+  }
+
+  /* ---------- CONTACT ---------- */
+  .contact-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+    gap:18px;
+  }
+  .contact-card{
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:24px;
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .contact-card .label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    color:var(--violet);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+  }
+  .contact-card .value{
+    font-size:0.95rem;
+    word-break:break-word;
+  }
+  .contact-card:hover{border-color:rgba(124,58,237,0.5);}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    position:relative; z-index:1;
+    text-align:center;
+    padding:36px 6vw 44px;
+    border-top:1px solid var(--line);
+    color:var(--dim);
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.8rem;
+  }
+  footer .tag{color:var(--cyan); margin-top:6px; display:block;}
+
+  @media (prefers-reduced-motion: reduce){
+    .dot, .terminal-line::after{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">CUPH<span>_</span>AKIDAKI</div>
+  <div class="nav-links">
+    <a href="#produk">Produk</a>
+    <a href="#kontak">Kontak</a>
+  </div>
+  <a class="nav-cta" href="https://wa.me/6282351118911" target="_blank" rel="noopener">$ order</a>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow"><span class="dot"></span> STATUS: ONLINE</div>
+  <h1>Cuph Akidaki Store</h1>
+  <p class="hero-sub">Bot, script, dan layanan digital untuk kebutuhan WhatsApp kamu. Simple, fast, professional.</p>
+  <div class="terminal-line" id="typing"></div>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#produk">Lihat Produk →</a>
+    <a class="btn-ghost" href="https://wa.me/6282351118911" target="_blank" rel="noopener">Chat WhatsApp</a>
+  </div>
+</header>
+
+<section class="section" id="produk">
+  <div class="section-head">
+    <span class="idx">$ ls ./produk</span>
+    <h2>Produk & Layanan</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="grid" id="product-grid">
+    <div class="card featured">
+      <div class="cmd">$ <span>install</span> sewa-bot --premium</div>
+      <div class="featured-top">
+        <h3 style="margin-bottom:0;">Sewa Bot Premium</h3>
+        <span class="badge">🔥 PALING LARIS</span>
+      </div>
+      <p class="desc">Bot WhatsApp siap pakai dengan 2000+ fitur, dikelola langsung oleh Owner.</p>
+
+      <div class="featured-body">
+        <div>
+          <ul class="price-list">
+            <li><span class="dur">1 Bulan</span><span class="amt">Rp10.000</span></li>
+            <li><span class="dur">2 Bulan</span><span class="amt">Rp15.000</span></li>
+            <li><span class="dur">3 Bulan</span><span class="amt">Rp20.000</span></li>
+            <li><span class="dur">6 Bulan</span><span class="amt">Rp25.000</span></li>
+            <li><span class="dur">1 Tahun</span><span class="amt">Rp30.000</span></li>
+            <li class="hot"><span class="dur">🔥 Permanen</span><span class="amt">Rp35.000</span></li>
+          </ul>
+          <div class="group-note"><b>Premium Group</b> — Rp5.000, premium untuk seluruh member grup, mengikuti masa sewa.</div>
+        </div>
+
+        <ul class="feature-list">
+          <li>2.000+ fitur lengkap</li>
+          <li>Fast & stabil</li>
+          <li>Online 24 jam</li>
+          <li>Keamanan grup lengkap</li>
+          <li>Anti link & anti spam</li>
+          <li>Sticker, game & hiburan</li>
+          <li>Download berbagai media</li>
+          <li>Dikelola langsung Owner</li>
+        </ul>
+      </div>
+
+      <div class="featured-tagline">
+        <span>⚡ Simple • Fast • Complete</span>
+        <span>Satu Bot, Banyak Kemudahan!</span>
+      </div>
+
+      <a class="order-btn" style="margin-top:20px;" href="https://wa.me/6282351118911?text=Halo%2C%20saya%20mau%20tanya%2Forder%20Sewa%20Bot%20Premium" target="_blank" rel="noopener">Order Sewa Bot →</a>
+    </div>
+
+    <div class="card featured">
+      <div class="cmd">$ <span>install</span> panel-pterodactyl --legal</div>
+      <div class="featured-top">
+        <h3 style="margin-bottom:0;">Panel Legal Berkualitas</h3>
+        <span class="badge">🚀 LEGAL & STABIL</span>
+      </div>
+      <p class="desc">Server bot legal, stabil & berkualitas — jangan sampai bot sering mati karena panel abal-abal.</p>
+
+      <div class="featured-body">
+        <div>
+          <ul class="price-list">
+            <li><span class="dur">6 GB</span><span class="amt">Rp8.000/Bulan</span></li>
+            <li><span class="dur">8 GB</span><span class="amt">Rp10.000/Bulan</span></li>
+            <li><span class="dur">10 GB</span><span class="amt">Rp12.000/Bulan</span></li>
+            <li class="hot"><span class="dur">🔥 Unlimited</span><span class="amt">Rp15.000/Bulan</span></li>
+          </ul>
+        </div>
+
+        <ul class="feature-list">
+          <li>VPS Legal & Aman</li>
+          <li>Garansi 15 Hari</li>
+          <li>Fast & Stabil</li>
+          <li>Privasi Lebih Terjaga</li>
+        </ul>
+      </div>
+
+      <div class="featured-tagline">
+        <span>🚀 Legal • Fast • Stable • Trusted</span>
+      </div>
+
+      <a class="order-btn" style="margin-top:20px;" href="https://wa.me/6282351118911?text=Halo%2C%20saya%20mau%20tanya%2Forder%20Panel%20Pterodactyl" target="_blank" rel="noopener">Order Panel →</a>
+    </div>
+
+    <div class="card featured">
+      <div class="cmd">$ <span>install</span> script-bot-akidaki-ai --v14</div>
+      <div class="featured-top">
+        <h3 style="margin-bottom:0;">Script Bot Akidaki AI V14</h3>
+        <span class="badge">🆕 NEW UPDATE</span>
+      </div>
+      <p class="desc">Script bot WhatsApp dengan 2040+ fitur, clean code, dan update rutin selamanya.</p>
+
+      <div class="featured-body">
+        <div>
+          <div class="single-price">
+            <span class="amt">Rp80.000</span>
+            <span class="perk">♾️ Full Update Selamanya</span>
+            <span class="perk">🎁 Bonus Panel Unli Legal Full 30 Hari</span>
+          </div>
+          <div class="addon-box">
+            <span class="addon-title">🛠️ JASA TAMBAHAN</span>
+            <div class="addon-item">Jasa Rename<span class="sub">Tidak perlu ribet ubah nama bot</span></div>
+            <div class="addon-item">Jasa Pasang & Run<span class="sub">Bot siap digunakan tanpa ribet</span></div>
+          </div>
+        </div>
+
+        <div>
+          <ul class="feature-list two-col">
+            <li>2.040+ fitur super lengkap</li>
+            <li>Type CJS</li>
+            <li>9 style menu</li>
+            <li>Support button & simple text</li>
+            <li>No enc 95%</li>
+            <li>Clean code & mudah dipahami</li>
+            <li>Open source</li>
+            <li>Bebas remake & tambah fitur</li>
+            <li>Anti bad session</li>
+            <li>Ringan & fast response</li>
+            <li>Update rutin</li>
+            <li>Cocok untuk grup & komunitas</li>
+          </ul>
+          <div class="trust-row">
+            <span class="chip">📹 Video tutorial</span>
+            <span class="chip">🚀 Panduan pasang</span>
+            <span class="chip">🤝 Bimbingan sampai mahir</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="featured-tagline">
+        <span>✨ Simple • Lengkap • Fast • Update Selamanya</span>
+      </div>
+
+      <a class="order-btn" style="margin-top:20px;" href="https://wa.me/6282351118911?text=Halo%2C%20saya%20mau%20tanya%2Forder%20Script%20Bot%20Akidaki%20AI%20V14" target="_blank" rel="noopener">Order Script Bot →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="kontak">
+  <div class="section-head">
+    <span class="idx">$ cat contact.json</span>
+    <h2>Hubungi Kami</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="contact-grid">
+    <a class="contact-card" href="https://wa.me/6282351118911" target="_blank" rel="noopener">
+      <span class="label">WhatsApp</span>
+      <span class="value">wa.me/6282351118911</span>
+    </a>
+    <a class="contact-card" href="https://t.me/ucupzkun" target="_blank" rel="noopener">
+      <span class="label">Telegram</span>
+      <span class="value">t.me/ucupzkun</span>
+    </a>
+    <a class="contact-card" href="https://chat.whatsapp.com/ClmA2wUx1ByFhYre85qcrv?s=cl&p=a&ilr=1" target="_blank" rel="noopener">
+      <span class="label">Grup WhatsApp</span>
+      <span class="value">Gabung grup diskusi & update</span>
+    </a>
+    <a class="contact-card" href="https://whatsapp.com/channel/0029Vb7lkqDFCCoTSvFtaO2h" target="_blank" rel="noopener">
+      <span class="label">Saluran Marketplace</span>
+      <span class="value">Update produk & promo</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  © 2026 Cuph Akidaki Store — All rights reserved
+  <span class="tag">Simple • Fast • Professional</span>
+</footer>
+
+<script>
+  const products = [
+    { cmd: "rename-script", name: "Rename Script Bot", desc: "Jasa rename & rebranding script bot menjadi identitas milikmu sendiri.", price: "Tanyakan harga" },
+    { cmd: "vote-saluran", name: "Jasa Vote Saluran", desc: "Bantu vote saluran WhatsApp kamu, maksimal 10 vote per pesanan.", price: "Max 10 vote" },
+    { cmd: "jasa-share", name: "Jasa Share", desc: "Layanan share konten/promosi sesuai kebutuhan.", price: "Tanyakan harga" },
+    { cmd: "nokos", name: "Nokos", desc: "Nomor kosong siap pakai untuk kebutuhan registrasi bot.", price: "Tanyakan harga" },
+    { cmd: "logo-design", name: "Jasa Logo & Design", desc: "Desain logo dan materi visual bergaya futuristik untuk brand bot kamu.", price: "Tanyakan harga" },
+    { cmd: "grup-siap-pakai", name: "Grup Siap Pakai", desc: "Grup WhatsApp siap pakai dengan member, tinggal langsung dipakai.", price: "Tanyakan harga" },
+    { cmd: "install-panel-vps", name: "Jasa Install Panel VPS", desc: "Jasa instalasi panel Pterodactyl langsung di VPS milikmu.", price: "Tanyakan harga" },
+  ];
+
+  const grid = document.getElementById('product-grid');
+  let cardsHtml = '';
+  products.forEach(p => {
+    const waText = encodeURIComponent(`Halo, saya mau tanya/order ${p.name}`);
+    cardsHtml += `
+      <div class="card">
+        <div class="cmd">$ <span>install</span> ${p.cmd}</div>
+        <h3>${p.name}</h3>
+        <p class="desc">${p.desc}</p>
+        <span class="price">${p.price}</span>
+        <a class="order-btn" href="https://wa.me/6282351118911?text=${waText}" target="_blank" rel="noopener">Order via WA →</a>
+      </div>
+    `;
+  });
+  grid.insertAdjacentHTML('beforeend', cardsHtml);
+
+  // Typing effect in hero
+  const lines = [
+    "> menyediakan bot, script, dan panel legal...",
+    "> fast response, harga bersahabat...",
+    "> ketik .menu untuk lihat semua produk..."
+  ];
+  const el = document.getElementById('typing');
+  let li = 0, ci = 0, deleting = false;
+
+  function tick(){
+    const current = lines[li];
+    if(!deleting){
+      ci++;
+      el.textContent = current.slice(0, ci);
+      if(ci === current.length){ deleting = true; setTimeout(tick, 1400); return; }
+    } else {
+      ci--;
+      el.textContent = current.slice(0, ci);
+      if(ci === 0){ deleting = false; li = (li+1) % lines.length; }
+    }
+    setTimeout(tick, deleting ? 25 : 45);
+  }
+  tick();
+</script>
+
+</body>
+</html>
