@@ -443,6 +443,19 @@
     color:var(--dim);
   }
 
+  /* ---------- REVEAL AFTER HERO ---------- */
+  .reveal-content{
+    display:none;
+    opacity:0;
+    transform:translateY(16px);
+    transition:opacity 0.5s ease, transform 0.5s ease;
+  }
+  .reveal-content.is-visible{
+    display:block;
+    opacity:1;
+    transform:translateY(0);
+  }
+
   /* ---------- CONTACT ---------- */
   .contact-grid{
     display:grid;
@@ -498,10 +511,12 @@
   <p class="hero-sub">Bot, script, dan layanan digital untuk kebutuhan WhatsApp kamu. Simple, fast, professional.</p>
   <div class="terminal-line" id="typing"></div>
   <div class="hero-actions">
-    <a class="btn-primary" href="#produk">Lihat Produk →</a>
+    <a class="btn-primary" href="#produk" id="reveal-trigger">Lihat Produk →</a>
     <a class="btn-ghost" href="https://wa.me/6282351118911" target="_blank" rel="noopener">Chat WhatsApp</a>
   </div>
 </header>
+
+<div class="reveal-content" id="reveal-content">
 
 <section class="section" id="produk">
   <div class="section-head">
@@ -560,9 +575,14 @@
       <div class="featured-body">
         <div>
           <ul class="price-list">
-            <li><span class="dur">6 GB</span><span class="amt">Rp8.000/Bulan</span></li>
-            <li><span class="dur">8 GB</span><span class="amt">Rp10.000/Bulan</span></li>
-            <li><span class="dur">10 GB</span><span class="amt">Rp12.000/Bulan</span></li>
+            <li><span class="dur">1 GB</span><span class="amt">Rp1.000/Bulan</span></li>
+            <li><span class="dur">2 GB</span><span class="amt">Rp2.000/Bulan</span></li>
+            <li><span class="dur">3 GB</span><span class="amt">Rp3.000/Bulan</span></li>
+            <li><span class="dur">4 GB</span><span class="amt">Rp4.000/Bulan</span></li>
+            <li><span class="dur">5 GB</span><span class="amt">Rp5.000/Bulan</span></li>
+            <li><span class="dur">6 GB</span><span class="amt">Rp6.000/Bulan</span></li>
+            <li><span class="dur">8 GB</span><span class="amt">Rp8.000/Bulan</span></li>
+            <li><span class="dur">10 GB</span><span class="amt">Rp10.000/Bulan</span></li>
             <li class="hot"><span class="dur">🔥 Unlimited</span><span class="amt">Rp15.000/Bulan</span></li>
           </ul>
         </div>
@@ -698,12 +718,14 @@
   <span class="tag">Simple • Fast • Professional</span>
 </footer>
 
+</div>
+
 <script>
   const products = [
     { cmd: "rename-script", name: "Rename Script Bot", desc: "Jasa rename & rebranding script bot menjadi identitas milikmu sendiri.", price: "Tanyakan harga" },
     { cmd: "vote-saluran", name: "Jasa Vote Saluran", desc: "Bantu vote saluran WhatsApp kamu, maksimal 10 vote per pesanan.", price: "Max 10 vote" },
     { cmd: "jasa-share", name: "Jasa Share", desc: "Layanan share konten/promosi sesuai kebutuhan.", price: "Tanyakan harga" },
-    { cmd: "nokos", name: "Nokos", desc: "Nomor kosong siap pakai untuk kebutuhan registrasi bot.", price: "Tanyakan harga" },
+    { cmd: "nokos", name: "Nokos", desc: "Nomor kosong siap pakai untuk kebutuhan registrasi WhatsApp.", price: "Tanyakan harga" },
     { cmd: "logo-design", name: "Jasa Logo & Design", desc: "Desain logo dan materi visual bergaya futuristik untuk brand bot kamu.", price: "Tanyakan harga" },
     { cmd: "grup-siap-pakai", name: "Grup Siap Pakai", desc: "Grup WhatsApp siap pakai dengan member, tinggal langsung dipakai.", price: "Tanyakan harga" },
     { cmd: "install-panel-vps", name: "Jasa Install Panel VPS", desc: "Jasa instalasi panel Pterodactyl langsung di VPS milikmu.", price: "Tanyakan harga" },
@@ -746,6 +768,16 @@
     setTimeout(tick, deleting ? 25 : 45);
   }
   tick();
+
+  // Reveal content on "Lihat Produk" click
+  document.getElementById('reveal-trigger').addEventListener('click', function(e){
+    e.preventDefault();
+    const content = document.getElementById('reveal-content');
+    content.classList.add('is-visible');
+    requestAnimationFrame(() => {
+      document.getElementById('produk').scrollIntoView({ behavior: 'smooth' });
+    });
+  });
 </script>
 
 </body>
