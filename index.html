@@ -40,7 +40,7 @@
 
   /* ---------- NAV ---------- */
   nav{
-    position:sticky; top:0; z-index:50;
+    position:sticky; top:0; z-index:70;
     display:flex; align-items:center; justify-content:space-between;
     padding:18px 6vw;
     background:rgba(7,10,18,0.75);
@@ -522,6 +522,136 @@
   .back-link:hover{ color:var(--cyan); }
   body.view-page .hero{ display:none; }
 
+  /* ---------- GAME ---------- */
+  .game-wrap{
+    max-width:640px;
+    margin:0 auto;
+  }
+  .game-progress-track{
+    width:100%;
+    height:10px;
+    border-radius:20px;
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    overflow:hidden;
+    margin-bottom:10px;
+  }
+  .game-progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg, var(--cyan), var(--violet));
+    transition:width 0.15s linear;
+  }
+  .game-progress-label{
+    display:flex; justify-content:space-between;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.75rem;
+    color:var(--dim);
+    margin-bottom:18px;
+  }
+  .game-progress-label span{color:var(--cyan); font-weight:700;}
+  .game-canvas-wrap{
+    position:relative;
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:12px;
+    overflow:hidden;
+    background:linear-gradient(180deg, #0d1420, #070a12);
+  }
+  #game-canvas, #snake-canvas{
+    display:block;
+    width:100%;
+    touch-action:manipulation;
+  }
+  .game-overlay{
+    position:absolute; inset:0;
+    display:none;
+    flex-direction:column; align-items:center; justify-content:center;
+    gap:14px;
+    background:rgba(7,10,18,0.82);
+    backdrop-filter:blur(3px);
+    text-align:center;
+    padding:20px;
+  }
+  .game-overlay.is-visible{display:flex;}
+  .game-overlay h3{
+    font-family:'Orbitron', sans-serif;
+    font-size:1.3rem;
+  }
+  .game-overlay p{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.85rem;
+    color:var(--dim);
+  }
+  .game-hint{
+    text-align:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    color:var(--dim);
+    margin-top:14px;
+  }
+
+  /* ---------- GAME TABS & PANELS ---------- */
+  .game-tabs{
+    display:flex; gap:10px;
+    margin-bottom:18px;
+  }
+  .game-tab{
+    flex:1;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.85rem;
+    padding:11px 10px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--bg-card);
+    color:var(--dim);
+    cursor:pointer;
+  }
+  .game-tab.is-active{
+    border-color:rgba(0,240,216,0.4);
+    color:var(--cyan);
+    background:rgba(0,240,216,0.06);
+  }
+  .game-panel{ display:none; }
+  .game-panel.is-active{ display:block; }
+
+  .snake-score-row{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.9rem;
+    color:var(--dim);
+    margin-bottom:10px;
+  }
+  .snake-score-row span:last-child{
+    color:var(--cyan);
+    font-weight:700;
+    font-size:1.1rem;
+  }
+
+  /* ---------- D-PAD ---------- */
+  .dpad{
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    margin-top:18px;
+  }
+  .dpad-mid{ display:flex; align-items:center; gap:8px; }
+  .dpad-btn{
+    width:52px; height:52px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:var(--bg-card);
+    color:var(--cyan);
+    font-size:1.2rem;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    user-select:none;
+    -webkit-user-select:none;
+    touch-action:manipulation;
+  }
+  .dpad-btn:active{
+    background:rgba(0,240,216,0.15);
+    border-color:rgba(0,240,216,0.5);
+  }
+
   /* ---------- CONTACT ---------- */
   .contact-grid{
     display:grid;
@@ -577,6 +707,7 @@
     <div class="menu-dropdown" id="menu-dropdown">
       <a href="#" data-view="produk">📦 Produk & Layanan</a>
       <a href="#" data-view="kontak">📞 Hubungi Kami</a>
+      <a href="#" data-view="payment">💳 Payment</a>
     </div>
   </div>
   <div class="logo" id="logo-home" style="cursor:pointer;">CUPH<span>_</span>AKIDAKI</div>
@@ -589,7 +720,7 @@
   <div class="terminal-line" id="typing"></div>
   <div class="hero-actions">
     <a class="btn-primary" href="#produk" id="reveal-trigger">Lihat Produk →</a>
-    <a class="btn-ghost" href="https://wa.me/6282351118911" target="_blank" rel="noopener">Chat WhatsApp</a>
+    <a class="btn-ghost" href="#" id="game-trigger">🎮 Main Game Gabut</a>
   </div>
 </header>
 
@@ -733,10 +864,15 @@
   </div>
 </section>
 
+</div>
+
+<div class="page" id="page-payment">
+  <a href="#" class="back-link" data-back="1">← Kembali</a>
+
 <section class="section" id="payment">
   <div class="section-head">
     <span class="idx"></span>
-    <h2>Metode Pembayaran</h2>
+    <h2>Payment</h2>
     <div class="rule"></div>
   </div>
   <div class="payment-wrap">
@@ -761,6 +897,96 @@
         </div>
       </div>
       <p class="payment-note">Scan QRIS di samping atau transfer langsung ke nomor di atas, lalu konfirmasi via WhatsApp.</p>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div class="page" id="page-game">
+  <a href="#" class="back-link" data-back="1">← Kembali</a>
+
+<section class="section" id="game">
+  <div class="section-head">
+    <span class="idx"></span>
+    <h2>Main Game Gabut</h2>
+    <div class="rule"></div>
+  </div>
+
+  <div class="game-wrap">
+    <div class="game-tabs">
+      <button class="game-tab is-active" id="tab-dino" data-game="dino">🦖 Dino Jump</button>
+      <button class="game-tab" id="tab-snake" data-game="snake">🐍 Ular vs Tikus</button>
+    </div>
+
+    <!-- ===== DINO JUMP PANEL ===== -->
+    <div class="game-panel is-active" id="panel-dino">
+      <div class="game-progress-track">
+        <div class="game-progress-fill" id="game-progress-fill"></div>
+      </div>
+      <div class="game-progress-label">
+        <span id="game-progress-text">0%</span>
+        <span>Finish: 100%</span>
+      </div>
+
+      <div class="game-canvas-wrap">
+        <canvas id="game-canvas" width="640" height="280"></canvas>
+
+        <div class="game-overlay" id="game-overlay-start">
+          <h3>🦖 Dino Jump</h3>
+          <p>Tap / klik / spasi untuk lompat.<br>Hindari rintangan sampai progress 100%!</p>
+          <a class="btn-primary" href="#" id="game-start-btn" style="padding:12px 22px;">Mulai →</a>
+        </div>
+
+        <div class="game-overlay" id="game-overlay-over">
+          <h3>💥 Kena Rintangan!</h3>
+          <p id="game-over-progress">Progress kamu: 0%</p>
+          <a class="btn-primary" href="#" id="game-retry-btn" style="padding:12px 22px;">Coba Lagi →</a>
+        </div>
+
+        <div class="game-overlay" id="game-overlay-finish">
+          <h3>🏁 Finish! 100%</h3>
+          <p>Mantap, kamu berhasil sampai garis finish!</p>
+          <a class="btn-primary" href="#" id="game-again-btn" style="padding:12px 22px;">Main Lagi →</a>
+        </div>
+      </div>
+
+      <p class="game-hint">Semakin jauh progress, kecepatan rintangan makin cepat. Ada rintangan tunggal dan ganda — perhatikan timing lompatanmu 👀</p>
+    </div>
+
+    <!-- ===== SNAKE PANEL ===== -->
+    <div class="game-panel" id="panel-snake">
+      <div class="snake-score-row">
+        <span>Skor</span>
+        <span id="snake-score-text">0</span>
+      </div>
+
+      <div class="game-canvas-wrap">
+        <canvas id="snake-canvas" width="640" height="280"></canvas>
+
+        <div class="game-overlay" id="snake-overlay-start">
+          <h3>🐍 Ular vs Tikus</h3>
+          <p>Gunakan tombol arah untuk gerak.<br>Makan tikus 🐭 untuk tambah skor +10 & badan makin panjang!</p>
+          <a class="btn-primary" href="#" id="snake-start-btn" style="padding:12px 22px;">Mulai →</a>
+        </div>
+
+        <div class="game-overlay" id="snake-overlay-over">
+          <h3>💀 Game Over!</h3>
+          <p id="snake-over-score">Skor kamu: 0</p>
+          <a class="btn-primary" href="#" id="snake-retry-btn" style="padding:12px 22px;">Coba Lagi →</a>
+        </div>
+      </div>
+
+      <div class="dpad">
+        <button class="dpad-btn dpad-up" id="dpad-up" aria-label="Atas">▲</button>
+        <div class="dpad-mid">
+          <button class="dpad-btn dpad-left" id="dpad-left" aria-label="Kiri">◀</button>
+          <button class="dpad-btn dpad-down" id="dpad-down" aria-label="Bawah">▼</button>
+          <button class="dpad-btn dpad-right" id="dpad-right" aria-label="Kanan">▶</button>
+        </div>
+      </div>
+
+      <p class="game-hint">Badan ular makin panjang tiap makan tikus. Jangan tabrak dinding atau badan sendiri ya!</p>
     </div>
   </div>
 </section>
@@ -855,7 +1081,9 @@
   // ---------- Page switcher ----------
   const pages = {
     produk: document.getElementById('page-produk'),
-    kontak: document.getElementById('page-kontak')
+    payment: document.getElementById('page-payment'),
+    kontak: document.getElementById('page-kontak'),
+    game: document.getElementById('page-game')
   };
   const menuBtn = document.getElementById('menu-btn');
   const menuDropdown = document.getElementById('menu-dropdown');
@@ -915,6 +1143,428 @@
     e.preventDefault();
     showPage('produk');
   });
+
+  // "Main Game Gabut" button on hero -> open game page
+  document.getElementById('game-trigger').addEventListener('click', function(e){
+    e.preventDefault();
+    showPage('game');
+    resetGame();
+  });
+
+  // ---------- Dino Jump Game ----------
+  const canvas = document.getElementById('game-canvas');
+  const ctx = canvas.getContext('2d');
+  const CW = canvas.width, CH = canvas.height;
+  const GROUND_Y = CH - 40;
+
+  const progressFill = document.getElementById('game-progress-fill');
+  const progressText = document.getElementById('game-progress-text');
+  const overlayStart = document.getElementById('game-overlay-start');
+  const overlayOver = document.getElementById('game-overlay-over');
+  const overlayFinish = document.getElementById('game-overlay-finish');
+  const overOverProgress = document.getElementById('game-over-progress');
+
+  const dino = { x: 60, y: GROUND_Y - 34, w: 34, h: 34, vy: 0, jumping: false };
+  const GRAVITY = 0.9;
+  const JUMP_FORCE = -14;
+
+  let obstacles = [];
+  let baseSpeed = 5;
+  let speed = baseSpeed;
+  let distance = 0;
+  const FINISH_DISTANCE = 18000; // total distance to reach 100%
+  let spawnTimer = 0;
+  let nextSpawnGap = 70;
+  let rafId = null;
+  let gameRunning = false;
+  let gameOver = false;
+  let gameFinished = false;
+
+  function resetGame(){
+    dino.y = GROUND_Y - dino.h;
+    dino.vy = 0;
+    dino.jumping = false;
+    obstacles = [];
+    speed = baseSpeed;
+    distance = 0;
+    spawnTimer = 0;
+    nextSpawnGap = 70;
+    gameRunning = false;
+    gameOver = false;
+    gameFinished = false;
+    updateProgressUI(0);
+    overlayOver.classList.remove('is-visible');
+    overlayFinish.classList.remove('is-visible');
+    overlayStart.classList.add('is-visible');
+    drawScene();
+    if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+  }
+
+  function updateProgressUI(pct){
+    const clamped = Math.max(0, Math.min(100, pct));
+    progressFill.style.width = clamped + '%';
+    progressText.textContent = Math.floor(clamped) + '%';
+  }
+
+  function spawnObstacle(){
+    const isDouble = Math.random() < 0.35;
+    const w = isDouble ? 56 : 26;
+    const h = 32 + Math.random() * 14;
+    obstacles.push({
+      x: CW + 10,
+      y: GROUND_Y - h,
+      w: w,
+      h: h,
+      double: isDouble
+    });
+  }
+
+  function doJump(){
+    if(!gameRunning){ return; }
+    if(!dino.jumping){
+      dino.vy = JUMP_FORCE;
+      dino.jumping = true;
+    }
+  }
+
+  function startGame(){
+    overlayStart.classList.remove('is-visible');
+    overlayOver.classList.remove('is-visible');
+    overlayFinish.classList.remove('is-visible');
+    gameRunning = true;
+    gameOver = false;
+    gameFinished = false;
+    if(!rafId){ loop(); }
+  }
+
+  function endGame(){
+    gameRunning = false;
+    gameOver = true;
+    const pct = Math.floor(Math.min(100, (distance / FINISH_DISTANCE) * 100));
+    overOverProgress.textContent = 'Progress kamu: ' + pct + '%';
+    overlayOver.classList.add('is-visible');
+    if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+  }
+
+  function finishGame(){
+    gameRunning = false;
+    gameFinished = true;
+    updateProgressUI(100);
+    overlayFinish.classList.add('is-visible');
+    if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+  }
+
+  function drawScene(){
+    ctx.clearRect(0, 0, CW, CH);
+
+    // background grid
+    ctx.strokeStyle = 'rgba(0,240,216,0.06)';
+    ctx.lineWidth = 1;
+    for(let gx = 0; gx < CW; gx += 32){
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, CH); ctx.stroke();
+    }
+
+    // ground line
+    ctx.strokeStyle = 'rgba(232,236,243,0.25)';
+    ctx.beginPath();
+    ctx.moveTo(0, GROUND_Y);
+    ctx.lineTo(CW, GROUND_Y);
+    ctx.stroke();
+
+    // dino
+    const grad = ctx.createLinearGradient(dino.x, dino.y, dino.x + dino.w, dino.y + dino.h);
+    grad.addColorStop(0, '#00f0d8');
+    grad.addColorStop(1, '#7c3aed');
+    ctx.fillStyle = grad;
+    ctx.fillRect(dino.x, dino.y, dino.w, dino.h);
+
+    // obstacles
+    ctx.fillStyle = '#ff5577';
+    obstacles.forEach(o => {
+      ctx.fillRect(o.x, o.y, o.w, o.h);
+    });
+  }
+
+  function loop(){
+    if(!gameRunning){ rafId = null; return; }
+
+    // physics
+    dino.vy += GRAVITY;
+    dino.y += dino.vy;
+    if(dino.y >= GROUND_Y - dino.h){
+      dino.y = GROUND_Y - dino.h;
+      dino.vy = 0;
+      dino.jumping = false;
+    }
+
+    // progress & speed scale with distance
+    distance += speed;
+    const progressPct = Math.min(100, (distance / FINISH_DISTANCE) * 100);
+    updateProgressUI(progressPct);
+    speed = baseSpeed + (progressPct / 100) * 7; // speeds up to baseSpeed+7
+
+    if(progressPct >= 100){
+      finishGame();
+      drawScene();
+      return;
+    }
+
+    // spawn obstacles
+    spawnTimer++;
+    if(spawnTimer >= nextSpawnGap){
+      spawnObstacle();
+      spawnTimer = 0;
+      nextSpawnGap = 55 + Math.random() * 45 - Math.min(25, progressPct * 0.2);
+      nextSpawnGap = Math.max(30, nextSpawnGap);
+    }
+
+    // move obstacles + collision
+    for(let i = obstacles.length - 1; i >= 0; i--){
+      const o = obstacles[i];
+      o.x -= speed;
+      if(o.x + o.w < 0){ obstacles.splice(i, 1); continue; }
+
+      const hit = dino.x < o.x + o.w &&
+                  dino.x + dino.w > o.x &&
+                  dino.y < o.y + o.h &&
+                  dino.y + dino.h > o.y;
+      if(hit){
+        endGame();
+        drawScene();
+        return;
+      }
+    }
+
+    drawScene();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  // controls
+  canvas.addEventListener('click', function(){
+    if(!gameRunning && !gameOver && !gameFinished){ return; }
+    doJump();
+  });
+  canvas.addEventListener('touchstart', function(e){
+    e.preventDefault();
+    doJump();
+  }, { passive:false });
+  document.addEventListener('keydown', function(e){
+    if(e.code === 'Space' || e.code === 'ArrowUp'){
+      if(document.getElementById('page-game').classList.contains('is-active')){
+        e.preventDefault();
+        doJump();
+      }
+    }
+  });
+
+  document.getElementById('game-start-btn').addEventListener('click', function(e){
+    e.preventDefault();
+    startGame();
+  });
+  document.getElementById('game-retry-btn').addEventListener('click', function(e){
+    e.preventDefault();
+    resetGame();
+    startGame();
+  });
+  document.getElementById('game-again-btn').addEventListener('click', function(e){
+    e.preventDefault();
+    resetGame();
+    startGame();
+  });
+
+  resetGame();
+
+  // ---------- Game Tabs ----------
+  const tabDino = document.getElementById('tab-dino');
+  const tabSnake = document.getElementById('tab-snake');
+  const panelDino = document.getElementById('panel-dino');
+  const panelSnake = document.getElementById('panel-snake');
+
+  function switchToTab(name){
+    if(name === 'dino'){
+      tabDino.classList.add('is-active');
+      tabSnake.classList.remove('is-active');
+      panelDino.classList.add('is-active');
+      panelSnake.classList.remove('is-active');
+      // stop snake loop if running
+      if(snakeLoopId){ clearInterval(snakeLoopId); snakeLoopId = null; }
+    } else {
+      tabSnake.classList.add('is-active');
+      tabDino.classList.remove('is-active');
+      panelSnake.classList.add('is-active');
+      panelDino.classList.remove('is-active');
+      // stop dino loop if running
+      gameRunning = false;
+      if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+    }
+  }
+  tabDino.addEventListener('click', () => switchToTab('dino'));
+  tabSnake.addEventListener('click', () => switchToTab('snake'));
+
+  // ---------- Snake vs Tikus Game ----------
+  const snakeCanvas = document.getElementById('snake-canvas');
+  const sctx = snakeCanvas.getContext('2d');
+  const SCW = snakeCanvas.width, SCH = snakeCanvas.height;
+  const CELL = 20;
+  const COLS = SCW / CELL;
+  const ROWS = SCH / CELL;
+
+  const snakeOverlayStart = document.getElementById('snake-overlay-start');
+  const snakeOverlayOver = document.getElementById('snake-overlay-over');
+  const snakeScoreText = document.getElementById('snake-score-text');
+  const snakeOverScore = document.getElementById('snake-over-score');
+
+  let snake, snakeDir, snakeNextDir, mouse, snakeScore, snakeRunning, snakeSpeedMs;
+  let snakeLoopId = null;
+
+  function resetSnake(){
+    snake = [
+      { x: 6, y: 7 },
+      { x: 5, y: 7 },
+      { x: 4, y: 7 }
+    ];
+    snakeDir = { x: 1, y: 0 };
+    snakeNextDir = { x: 1, y: 0 };
+    snakeScore = 0;
+    snakeSpeedMs = 150;
+    snakeRunning = false;
+    snakeScoreText.textContent = '0';
+    placeMouse();
+    snakeOverlayOver.classList.remove('is-visible');
+    snakeOverlayStart.classList.add('is-visible');
+    if(snakeLoopId){ clearInterval(snakeLoopId); snakeLoopId = null; }
+    drawSnakeScene();
+  }
+
+  function placeMouse(){
+    let pos;
+    do {
+      pos = { x: Math.floor(Math.random() * COLS), y: Math.floor(Math.random() * ROWS) };
+    } while(snake.some(s => s.x === pos.x && s.y === pos.y));
+    mouse = pos;
+  }
+
+  function startSnake(){
+    snakeOverlayStart.classList.remove('is-visible');
+    snakeOverlayOver.classList.remove('is-visible');
+    snakeRunning = true;
+    if(snakeLoopId){ clearInterval(snakeLoopId); }
+    snakeLoopId = setInterval(snakeTick, snakeSpeedMs);
+  }
+
+  function restartSnakeLoop(){
+    if(snakeLoopId){ clearInterval(snakeLoopId); }
+    snakeLoopId = setInterval(snakeTick, snakeSpeedMs);
+  }
+
+  function setSnakeDir(dx, dy){
+    if(!snakeRunning) return;
+    // prevent reversing directly into itself
+    if(snakeDir.x === -dx && snakeDir.y === -dy) return;
+    snakeNextDir = { x: dx, y: dy };
+  }
+
+  function snakeTick(){
+    snakeDir = snakeNextDir;
+    const head = snake[0];
+    const newHead = { x: head.x + snakeDir.x, y: head.y + snakeDir.y };
+
+    // wall collision
+    if(newHead.x < 0 || newHead.x >= COLS || newHead.y < 0 || newHead.y >= ROWS){
+      endSnake();
+      return;
+    }
+    // self collision
+    if(snake.some(s => s.x === newHead.x && s.y === newHead.y)){
+      endSnake();
+      return;
+    }
+
+    snake.unshift(newHead);
+
+    if(newHead.x === mouse.x && newHead.y === mouse.y){
+      snakeScore += 10;
+      snakeScoreText.textContent = snakeScore;
+      placeMouse();
+      // speed up slightly every few mice, capped
+      if(snakeScore % 30 === 0 && snakeSpeedMs > 70){
+        snakeSpeedMs -= 8;
+        restartSnakeLoop();
+      }
+    } else {
+      snake.pop();
+    }
+
+    drawSnakeScene();
+  }
+
+  function endSnake(){
+    snakeRunning = false;
+    if(snakeLoopId){ clearInterval(snakeLoopId); snakeLoopId = null; }
+    snakeOverScore.textContent = 'Skor kamu: ' + snakeScore;
+    snakeOverlayOver.classList.add('is-visible');
+  }
+
+  function drawSnakeScene(){
+    sctx.clearRect(0, 0, SCW, SCH);
+
+    // background grid
+    sctx.strokeStyle = 'rgba(0,240,216,0.06)';
+    sctx.lineWidth = 1;
+    for(let gx = 0; gx < SCW; gx += CELL){
+      sctx.beginPath(); sctx.moveTo(gx, 0); sctx.lineTo(gx, SCH); sctx.stroke();
+    }
+    for(let gy = 0; gy < SCH; gy += CELL){
+      sctx.beginPath(); sctx.moveTo(0, gy); sctx.lineTo(SCW, gy); sctx.stroke();
+    }
+
+    // mouse
+    sctx.fillStyle = '#ff5577';
+    sctx.beginPath();
+    sctx.arc(mouse.x * CELL + CELL/2, mouse.y * CELL + CELL/2, CELL/2 - 3, 0, Math.PI * 2);
+    sctx.fill();
+
+    // snake
+    snake.forEach((s, i) => {
+      const grad = sctx.createLinearGradient(s.x*CELL, s.y*CELL, s.x*CELL+CELL, s.y*CELL+CELL);
+      if(i === 0){
+        grad.addColorStop(0, '#00f0d8');
+        grad.addColorStop(1, '#00f0d8');
+      } else {
+        grad.addColorStop(0, '#00f0d8');
+        grad.addColorStop(1, '#7c3aed');
+      }
+      sctx.fillStyle = grad;
+      sctx.fillRect(s.x*CELL + 1, s.y*CELL + 1, CELL - 2, CELL - 2);
+    });
+  }
+
+  // controls: D-pad
+  document.getElementById('dpad-up').addEventListener('click', () => setSnakeDir(0, -1));
+  document.getElementById('dpad-down').addEventListener('click', () => setSnakeDir(0, 1));
+  document.getElementById('dpad-left').addEventListener('click', () => setSnakeDir(-1, 0));
+  document.getElementById('dpad-right').addEventListener('click', () => setSnakeDir(1, 0));
+
+  // controls: keyboard arrows (when snake panel active)
+  document.addEventListener('keydown', function(e){
+    if(!panelSnake.classList.contains('is-active')) return;
+    if(e.code === 'ArrowUp'){ e.preventDefault(); setSnakeDir(0, -1); }
+    else if(e.code === 'ArrowDown'){ e.preventDefault(); setSnakeDir(0, 1); }
+    else if(e.code === 'ArrowLeft'){ e.preventDefault(); setSnakeDir(-1, 0); }
+    else if(e.code === 'ArrowRight'){ e.preventDefault(); setSnakeDir(1, 0); }
+  });
+
+  document.getElementById('snake-start-btn').addEventListener('click', function(e){
+    e.preventDefault();
+    startSnake();
+  });
+  document.getElementById('snake-retry-btn').addEventListener('click', function(e){
+    e.preventDefault();
+    resetSnake();
+    startSnake();
+  });
+
+  resetSnake();
 </script>
 
 </body>
