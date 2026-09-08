@@ -595,14 +595,18 @@
   }
   .game-tab{
     flex:1;
+    min-width:0;
     font-family:'JetBrains Mono', monospace;
-    font-size:0.85rem;
-    padding:11px 10px;
+    font-size:0.78rem;
+    padding:11px 6px;
     border-radius:8px;
     border:1px solid var(--line);
     background:var(--bg-card);
     color:var(--dim);
     cursor:pointer;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
   }
   .game-tab.is-active{
     border-color:rgba(0,240,216,0.4);
@@ -648,6 +652,97 @@
     background:rgba(0,240,216,0.15);
     border-color:rgba(0,240,216,0.5);
   }
+
+  /* ---------- CHESS ---------- */
+  .chess-mode-select{
+    display:flex; flex-direction:column; gap:12px;
+    max-width:420px;
+    margin:0 auto;
+  }
+  .chess-mode-btn{
+    display:flex; flex-direction:column; gap:4px;
+    text-align:left;
+    padding:18px 20px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:var(--bg-card);
+    cursor:pointer;
+    font-family:'Inter', sans-serif;
+  }
+  .chess-mode-btn:hover{ border-color:rgba(0,240,216,0.4); }
+  .chess-mode-btn .cm-title{
+    font-family:'Orbitron', sans-serif;
+    font-size:1rem;
+    color:var(--text);
+  }
+  .chess-mode-btn .cm-desc{
+    font-size:0.8rem;
+    color:var(--dim);
+  }
+  .chess-status-row{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.82rem;
+    color:var(--dim);
+    margin-bottom:10px;
+  }
+  .chess-status-row .cs-turn{ color:var(--cyan); font-weight:700; }
+  .chess-board-wrap{
+    max-width:420px;
+    margin:0 auto;
+  }
+  .chess-board{
+    display:grid;
+    grid-template-columns:repeat(8, 1fr);
+    grid-template-rows:repeat(8, 1fr);
+    width:100%;
+    aspect-ratio:1/1;
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .chess-sq{
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+    font-size:min(6.5vw, 28px);
+    cursor:pointer;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  .chess-sq.light{ background:#1c2538; }
+  .chess-sq.dark{ background:#0d1420; }
+  .chess-sq.is-selected{ background:rgba(0,240,216,0.28) !important; }
+  .chess-sq .piece-w{ color:#e8ecf3; text-shadow:0 0 6px rgba(0,240,216,0.5); }
+  .chess-sq .piece-b{ color:#a78bfa; text-shadow:0 0 6px rgba(124,58,237,0.5); }
+  .chess-sq .move-dot{
+    position:absolute;
+    width:22%; height:22%;
+    border-radius:50%;
+    background:rgba(0,240,216,0.55);
+    pointer-events:none;
+  }
+  .chess-sq .move-ring{
+    position:absolute;
+    inset:8%;
+    border-radius:50%;
+    border:3px solid rgba(255,85,119,0.7);
+    pointer-events:none;
+  }
+  .chess-controls{
+    display:flex; justify-content:center; gap:10px;
+    margin-top:16px;
+  }
+  .chess-btn-small{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    padding:9px 16px;
+    border-radius:7px;
+    border:1px solid var(--line);
+    background:var(--bg-card);
+    color:var(--dim);
+    cursor:pointer;
+  }
+  .chess-btn-small:hover{ color:var(--cyan); border-color:rgba(0,240,216,0.4); }
 
   /* ---------- CONTACT ---------- */
   .contact-grid{
@@ -914,6 +1009,7 @@
     <div class="game-tabs">
       <button class="game-tab is-active" id="tab-dino" data-game="dino">🦖 Dino Jump</button>
       <button class="game-tab" id="tab-snake" data-game="snake">🐍 Ular vs Tikus</button>
+      <button class="game-tab" id="tab-chess" data-game="chess">♟️ Catur</button>
     </div>
 
     <!-- ===== DINO JUMP PANEL ===== -->
@@ -984,6 +1080,39 @@
       </div>
 
       <p class="game-hint">Badan ular makin panjang tiap makan tikus. Jangan tabrak dinding atau badan sendiri ya!</p>
+    </div>
+
+    <!-- ===== CHESS PANEL ===== -->
+    <div class="game-panel" id="panel-chess">
+
+      <div class="chess-mode-select" id="chess-mode-select">
+        <button class="chess-mode-btn" id="chess-mode-single">
+          <span class="cm-title">🤖 Single Player</span>
+          <span class="cm-desc">Main sendiri lawan AI komputer.</span>
+        </button>
+        <button class="chess-mode-btn" id="chess-mode-multi">
+          <span class="cm-title">👥 Multiplayer (2 Pemain)</span>
+          <span class="cm-desc">Gantian jalan berdua di 1 HP/layar yang sama.</span>
+        </button>
+      </div>
+
+      <div id="chess-game-area" style="display:none;">
+        <div class="chess-status-row">
+          <span>Giliran: <span class="cs-turn" id="chess-turn-text">Putih</span></span>
+          <span id="chess-mode-label">Single Player</span>
+        </div>
+
+        <div class="chess-board-wrap">
+          <div class="chess-board" id="chess-board"></div>
+        </div>
+
+        <div class="chess-controls">
+          <button class="chess-btn-small" id="chess-restart-btn">🔄 Ulang</button>
+          <button class="chess-btn-small" id="chess-back-mode-btn">↩ Ganti Mode</button>
+        </div>
+
+        <p class="game-hint" id="chess-result-text">Catur simple: belum mendukung rokade & en passant, promosi pion otomatis jadi ratu.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -1126,6 +1255,7 @@
       if(typeof rafId !== 'undefined' && rafId){ cancelAnimationFrame(rafId); rafId = null; }
       if(typeof gameRunning !== 'undefined'){ gameRunning = false; }
       if(typeof snakeLoopId !== 'undefined' && snakeLoopId){ clearInterval(snakeLoopId); snakeLoopId = null; }
+      if(typeof chessAITimeout !== 'undefined' && chessAITimeout){ clearTimeout(chessAITimeout); chessAITimeout = null; }
     }
 
     if(outgoingKey){ hideView(pages[outgoingKey]); }
@@ -1203,7 +1333,7 @@
   let baseSpeed = 5;
   let speed = baseSpeed;
   let distance = 0;
-  const FINISH_DISTANCE = 18000; // total distance to reach 100%
+  const FINISH_DISTANCE = 34000; // total distance to reach 100%
   let spawnTimer = 0;
   let nextSpawnGap = 70;
   let rafId = null;
@@ -1408,29 +1538,32 @@
   // ---------- Game Tabs ----------
   const tabDino = document.getElementById('tab-dino');
   const tabSnake = document.getElementById('tab-snake');
+  const tabChess = document.getElementById('tab-chess');
   const panelDino = document.getElementById('panel-dino');
   const panelSnake = document.getElementById('panel-snake');
+  const panelChess = document.getElementById('panel-chess');
+
+  const gameTabs = { dino: tabDino, snake: tabSnake, chess: tabChess };
+  const gamePanels = { dino: panelDino, snake: panelSnake, chess: panelChess };
 
   function switchToTab(name){
-    if(name === 'dino'){
-      tabDino.classList.add('is-active');
-      tabSnake.classList.remove('is-active');
-      panelDino.classList.add('is-active');
-      panelSnake.classList.remove('is-active');
-      // stop snake loop if running
-      if(snakeLoopId){ clearInterval(snakeLoopId); snakeLoopId = null; }
-    } else {
-      tabSnake.classList.add('is-active');
-      tabDino.classList.remove('is-active');
-      panelSnake.classList.add('is-active');
-      panelDino.classList.remove('is-active');
-      // stop dino loop if running
+    Object.keys(gameTabs).forEach(key => {
+      gameTabs[key].classList.toggle('is-active', key === name);
+      gamePanels[key].classList.toggle('is-active', key === name);
+    });
+    // stop dino loop if leaving it
+    if(name !== 'dino'){
       gameRunning = false;
       if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+    }
+    // stop snake loop if leaving it
+    if(name !== 'snake'){
+      if(snakeLoopId){ clearInterval(snakeLoopId); snakeLoopId = null; }
     }
   }
   tabDino.addEventListener('click', () => switchToTab('dino'));
   tabSnake.addEventListener('click', () => switchToTab('snake'));
+  tabChess.addEventListener('click', () => switchToTab('chess'));
 
   // ---------- Snake vs Tikus Game ----------
   const snakeCanvas = document.getElementById('snake-canvas');
@@ -1596,6 +1729,352 @@
   });
 
   resetSnake();
+
+  // ---------- Chess Engine ----------
+  const PIECE_GLYPH = {
+    p: '♟', n: '♞', b: '♝', r: '♜', q: '♛', k: '♚'
+  };
+  const PIECE_VALUE = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
+
+  let chessBoard = [];
+  let chessTurn = 'w';
+  let chessMode = null; // 'single' | 'multi'
+  let chessSelected = null; // {r,c}
+  let chessLegalTargets = []; // [{r,c,capture:bool}]
+  let chessGameOver = false;
+  let chessAITimeout = null;
+
+  function initChessBoard(){
+    const back = ['r','n','b','q','k','b','n','r'];
+    const b = [];
+    b[0] = back.map(t => ({ type: t, color: 'b' }));
+    b[1] = Array(8).fill(null).map(() => ({ type: 'p', color: 'b' }));
+    for(let r = 2; r <= 5; r++){ b[r] = Array(8).fill(null); }
+    b[6] = Array(8).fill(null).map(() => ({ type: 'p', color: 'w' }));
+    b[7] = back.map(t => ({ type: t, color: 'w' }));
+    return b;
+  }
+
+  function cloneBoard(b){
+    return b.map(row => row.map(cell => cell ? { type: cell.type, color: cell.color } : null));
+  }
+
+  function inBounds(r, c){ return r >= 0 && r < 8 && c >= 0 && c < 8; }
+
+  // Pseudo-legal moves for a piece at (r,c), ignoring whether it leaves own king in check
+  function pseudoMoves(board, r, c){
+    const piece = board[r][c];
+    if(!piece) return [];
+    const moves = [];
+    const dir = piece.color === 'w' ? -1 : 1;
+
+    function addIfValid(nr, nc, captureOnly, moveOnly){
+      if(!inBounds(nr, nc)) return false;
+      const target = board[nr][nc];
+      if(target && target.color === piece.color) return false;
+      if(captureOnly && !target) return false;
+      if(moveOnly && target) return false;
+      moves.push({ r: nr, c: nc, capture: !!target });
+      return !target; // true if empty (can continue sliding)
+    }
+
+    if(piece.type === 'p'){
+      const startRow = piece.color === 'w' ? 6 : 1;
+      if(inBounds(r+dir, c) && !board[r+dir][c]){
+        addIfValid(r+dir, c, false, true);
+        if(r === startRow && !board[r+2*dir][c]){
+          addIfValid(r+2*dir, c, false, true);
+        }
+      }
+      [c-1, c+1].forEach(nc => {
+        if(inBounds(r+dir, nc) && board[r+dir][nc] && board[r+dir][nc].color !== piece.color){
+          addIfValid(r+dir, nc, true, false);
+        }
+      });
+    } else if(piece.type === 'n'){
+      const offsets = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+      offsets.forEach(([dr,dc]) => addIfValid(r+dr, c+dc, false, false));
+    } else if(piece.type === 'k'){
+      for(let dr=-1; dr<=1; dr++){
+        for(let dc=-1; dc<=1; dc++){
+          if(dr===0 && dc===0) continue;
+          addIfValid(r+dr, c+dc, false, false);
+        }
+      }
+    } else {
+      let dirs = [];
+      if(piece.type === 'b' || piece.type === 'q') dirs.push([-1,-1],[-1,1],[1,-1],[1,1]);
+      if(piece.type === 'r' || piece.type === 'q') dirs.push([-1,0],[1,0],[0,-1],[0,1]);
+      dirs.forEach(([dr,dc]) => {
+        let nr = r+dr, nc = c+dc;
+        while(inBounds(nr, nc)){
+          const canContinue = addIfValid(nr, nc, false, false);
+          if(!canContinue) break;
+          nr += dr; nc += dc;
+        }
+      });
+    }
+    return moves;
+  }
+
+  function findKing(board, color){
+    for(let r=0; r<8; r++){
+      for(let c=0; c<8; c++){
+        if(board[r][c] && board[r][c].type === 'k' && board[r][c].color === color) return { r, c };
+      }
+    }
+    return null;
+  }
+
+  function isSquareAttacked(board, r, c, byColor){
+    for(let rr=0; rr<8; rr++){
+      for(let cc=0; cc<8; cc++){
+        const p = board[rr][cc];
+        if(p && p.color === byColor){
+          const moves = pseudoMoves(board, rr, cc);
+          if(moves.some(m => m.r === r && m.c === c)) return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function isInCheck(board, color){
+    const kingPos = findKing(board, color);
+    if(!kingPos) return false;
+    const enemyColor = color === 'w' ? 'b' : 'w';
+    return isSquareAttacked(board, kingPos.r, kingPos.c, enemyColor);
+  }
+
+  function legalMovesForPiece(board, r, c){
+    const piece = board[r][c];
+    if(!piece) return [];
+    const pseudo = pseudoMoves(board, r, c);
+    return pseudo.filter(m => {
+      const clone = cloneBoard(board);
+      clone[m.r][m.c] = clone[r][c];
+      clone[r][c] = null;
+      return !isInCheck(clone, piece.color);
+    });
+  }
+
+  function allLegalMoves(board, color){
+    const result = [];
+    for(let r=0; r<8; r++){
+      for(let c=0; c<8; c++){
+        const p = board[r][c];
+        if(p && p.color === color){
+          legalMovesForPiece(board, r, c).forEach(m => {
+            result.push({ from: { r, c }, to: { r: m.r, c: m.c }, capture: m.capture });
+          });
+        }
+      }
+    }
+    return result;
+  }
+
+  function applyMove(board, move){
+    const piece = board[move.from.r][move.from.c];
+    board[move.to.r][move.to.c] = piece;
+    board[move.from.r][move.from.c] = null;
+    // auto-promote pawn to queen
+    if(piece.type === 'p' && (move.to.r === 0 || move.to.r === 7)){
+      piece.type = 'q';
+    }
+  }
+
+  function evaluateBoard(board){
+    let score = 0;
+    for(let r=0; r<8; r++){
+      for(let c=0; c<8; c++){
+        const p = board[r][c];
+        if(p){ score += (p.color === 'w' ? 1 : -1) * PIECE_VALUE[p.type]; }
+      }
+    }
+    return score; // positive = good for white
+  }
+
+  // Simple depth-2 minimax for AI (AI plays black)
+  function pickAIMove(board){
+    const aiMoves = allLegalMoves(board, 'b');
+    if(aiMoves.length === 0) return null;
+
+    let bestScore = Infinity;
+    let bestMoves = [];
+
+    aiMoves.forEach(move => {
+      const afterAI = cloneBoard(board);
+      applyMove(afterAI, move);
+
+      const replies = allLegalMoves(afterAI, 'w');
+      let worstForBlack;
+      if(replies.length === 0){
+        worstForBlack = evaluateBoard(afterAI);
+      } else {
+        worstForBlack = -Infinity;
+        replies.forEach(reply => {
+          const afterReply = cloneBoard(afterAI);
+          applyMove(afterReply, reply);
+          const score = evaluateBoard(afterReply);
+          if(score > worstForBlack) worstForBlack = score;
+        });
+      }
+      if(worstForBlack < bestScore){
+        bestScore = worstForBlack;
+        bestMoves = [move];
+      } else if(worstForBlack === bestScore){
+        bestMoves.push(move);
+      }
+    });
+
+    return bestMoves[Math.floor(Math.random() * bestMoves.length)];
+  }
+
+  // ---------- Chess Rendering ----------
+  const chessBoardEl = document.getElementById('chess-board');
+  const chessTurnText = document.getElementById('chess-turn-text');
+  const chessResultText = document.getElementById('chess-result-text');
+  const chessModeLabel = document.getElementById('chess-mode-label');
+  const chessModeSelect = document.getElementById('chess-mode-select');
+  const chessGameArea = document.getElementById('chess-game-area');
+
+  function renderChessBoard(){
+    chessBoardEl.innerHTML = '';
+    for(let r=0; r<8; r++){
+      for(let c=0; c<8; c++){
+        const sq = document.createElement('div');
+        sq.className = 'chess-sq ' + ((r+c) % 2 === 0 ? 'light' : 'dark');
+        sq.dataset.r = r; sq.dataset.c = c;
+
+        const piece = chessBoard[r][c];
+        if(piece){
+          const span = document.createElement('span');
+          span.className = piece.color === 'w' ? 'piece-w' : 'piece-b';
+          span.textContent = PIECE_GLYPH[piece.type];
+          sq.appendChild(span);
+        }
+
+        if(chessSelected && chessSelected.r === r && chessSelected.c === c){
+          sq.classList.add('is-selected');
+        }
+        const target = chessLegalTargets.find(m => m.r === r && m.c === c);
+        if(target){
+          const marker = document.createElement('div');
+          marker.className = target.capture ? 'move-ring' : 'move-dot';
+          sq.appendChild(marker);
+        }
+
+        sq.addEventListener('click', () => onChessSquareClick(r, c));
+        chessBoardEl.appendChild(sq);
+      }
+    }
+  }
+
+  function updateChessStatusText(){
+    chessTurnText.textContent = chessTurn === 'w' ? 'Putih' : 'Hitam';
+  }
+
+  function onChessSquareClick(r, c){
+    if(chessGameOver) return;
+    if(chessMode === 'single' && chessTurn === 'b') return; // AI's turn, ignore clicks
+
+    const piece = chessBoard[r][c];
+
+    if(chessSelected){
+      const target = chessLegalTargets.find(m => m.r === r && m.c === c);
+      if(target){
+        applyMove(chessBoard, { from: chessSelected, to: { r, c } });
+        chessSelected = null;
+        chessLegalTargets = [];
+        afterChessMove();
+        return;
+      }
+      // clicking another own piece re-selects
+      if(piece && piece.color === chessTurn){
+        chessSelected = { r, c };
+        chessLegalTargets = legalMovesForPiece(chessBoard, r, c);
+        renderChessBoard();
+        return;
+      }
+      // clicking elsewhere deselects
+      chessSelected = null;
+      chessLegalTargets = [];
+      renderChessBoard();
+      return;
+    }
+
+    if(piece && piece.color === chessTurn){
+      chessSelected = { r, c };
+      chessLegalTargets = legalMovesForPiece(chessBoard, r, c);
+      renderChessBoard();
+    }
+  }
+
+  function afterChessMove(){
+    chessTurn = chessTurn === 'w' ? 'b' : 'w';
+    updateChessStatusText();
+    renderChessBoard();
+    checkChessGameEnd();
+
+    if(!chessGameOver && chessMode === 'single' && chessTurn === 'b'){
+      chessResultText.textContent = 'AI sedang berpikir...';
+      chessAITimeout = setTimeout(() => {
+        const move = pickAIMove(chessBoard);
+        if(move){
+          applyMove(chessBoard, move);
+        }
+        chessTurn = 'w';
+        updateChessStatusText();
+        renderChessBoard();
+        checkChessGameEnd();
+        if(!chessGameOver){
+          chessResultText.textContent = 'Catur simple: belum mendukung rokade & en passant, promosi pion otomatis jadi ratu.';
+        }
+      }, 500);
+    }
+  }
+
+  function checkChessGameEnd(){
+    const moves = allLegalMoves(chessBoard, chessTurn);
+    if(moves.length === 0){
+      chessGameOver = true;
+      if(isInCheck(chessBoard, chessTurn)){
+        const winner = chessTurn === 'w' ? 'Hitam' : 'Putih';
+        chessResultText.textContent = '🏆 Skakmat! ' + winner + ' menang!';
+      } else {
+        chessResultText.textContent = '🤝 Seri (stalemate)!';
+      }
+    }
+  }
+
+  function resetChess(){
+    chessBoard = initChessBoard();
+    chessTurn = 'w';
+    chessSelected = null;
+    chessLegalTargets = [];
+    chessGameOver = false;
+    if(chessAITimeout){ clearTimeout(chessAITimeout); chessAITimeout = null; }
+    updateChessStatusText();
+    renderChessBoard();
+    chessResultText.textContent = 'Catur simple: belum mendukung rokade & en passant, promosi pion otomatis jadi ratu.';
+  }
+
+  function startChess(mode){
+    chessMode = mode;
+    chessModeLabel.textContent = mode === 'single' ? 'Single Player' : 'Multiplayer (2 Pemain)';
+    chessModeSelect.style.display = 'none';
+    chessGameArea.style.display = 'block';
+    resetChess();
+  }
+
+  document.getElementById('chess-mode-single').addEventListener('click', () => startChess('single'));
+  document.getElementById('chess-mode-multi').addEventListener('click', () => startChess('multi'));
+  document.getElementById('chess-restart-btn').addEventListener('click', () => resetChess());
+  document.getElementById('chess-back-mode-btn').addEventListener('click', () => {
+    if(chessAITimeout){ clearTimeout(chessAITimeout); chessAITimeout = null; }
+    chessGameArea.style.display = 'none';
+    chessModeSelect.style.display = 'flex';
+  });
 </script>
 
 </body>
