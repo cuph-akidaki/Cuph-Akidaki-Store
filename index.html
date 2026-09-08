@@ -500,16 +500,14 @@
   .menu-backdrop.is-open{ display:block; }
 
   /* ---------- PAGE VIEWS ---------- */
-  .page{
-    display:none;
+  .view-fade{
     opacity:0;
-    transform:translateY(12px);
-    transition:opacity 0.35s ease, transform 0.35s ease;
+    transform:translateY(24px) scale(0.97);
+    transition:opacity 0.4s cubic-bezier(.4,0,.2,1), transform 0.4s cubic-bezier(.4,0,.2,1);
   }
-  .page.is-active{
-    display:block;
+  .view-fade.is-active{
     opacity:1;
-    transform:translateY(0);
+    transform:translateY(0) scale(1);
   }
   .back-link{
     display:inline-flex; align-items:center; gap:8px;
@@ -520,7 +518,6 @@
     margin:0 6vw;
   }
   .back-link:hover{ color:var(--cyan); }
-  body.view-page .hero{ display:none; }
 
   /* ---------- GAME ---------- */
   .game-wrap{
@@ -713,7 +710,7 @@
   <div class="logo" id="logo-home" style="cursor:pointer;">CUPH<span>_</span>AKIDAKI</div>
 </nav>
 
-<header class="hero">
+<header class="hero view-fade is-active">
   <div class="eyebrow"><span class="dot"></span> STATUS: ONLINE</div>
   <h1>Cuph Akidaki Store</h1>
   <p class="hero-sub">Bot, script, dan layanan digital untuk kebutuhan WhatsApp kamu. Simple, fast, professional.</p>
@@ -724,7 +721,7 @@
   </div>
 </header>
 
-<div class="page" id="page-produk">
+<div class="page view-fade" id="page-produk" style="display:none;">
   <a href="#" class="back-link" data-back="1">← Kembali</a>
 
 <section class="section" id="produk">
@@ -866,7 +863,7 @@
 
 </div>
 
-<div class="page" id="page-payment">
+<div class="page view-fade" id="page-payment" style="display:none;">
   <a href="#" class="back-link" data-back="1">← Kembali</a>
 
 <section class="section" id="payment">
@@ -903,7 +900,7 @@
 
 </div>
 
-<div class="page" id="page-game">
+<div class="page view-fade" id="page-game" style="display:none;">
   <a href="#" class="back-link" data-back="1">← Kembali</a>
 
 <section class="section" id="game">
@@ -993,7 +990,7 @@
 
 </div>
 
-<div class="page" id="page-kontak">
+<div class="page view-fade" id="page-kontak" style="display:none;">
   <a href="#" class="back-link" data-back="1">← Kembali</a>
 
 <section class="section" id="kontak">
@@ -1078,7 +1075,8 @@
   }
   tick();
 
-  // ---------- Page switcher ----------
+  // ---------- Page switcher (with transition animation) ----------
+  const heroEl = document.querySelector('header.hero');
   const pages = {
     produk: document.getElementById('page-produk'),
     payment: document.getElementById('page-payment'),
@@ -1103,15 +1101,48 @@
   });
   menuBackdrop.addEventListener('click', closeMenu);
 
+  const TRANSITION_MS = 400;
+  let isSwitching = false;
+
+  function hideView(el){
+    el.classList.remove('is-active');
+    setTimeout(() => { el.style.display = 'none'; }, TRANSITION_MS);
+  }
+  function showView(el, displayValue){
+    el.style.display = displayValue;
+    void el.offsetWidth; // force reflow so the transition plays from the hidden state
+    requestAnimationFrame(() => el.classList.add('is-active'));
+  }
+
   function showPage(name){
-    Object.values(pages).forEach(p => p.classList.remove('is-active'));
-    if(name && pages[name]){
-      pages[name].classList.add('is-active');
-      document.body.classList.add('view-page');
-    } else {
-      document.body.classList.remove('view-page');
+    if(isSwitching) return;
+    isSwitching = true;
+
+    const outgoingKey = Object.keys(pages).find(k => pages[k].classList.contains('is-active'));
+    const heroVisible = heroEl.classList.contains('is-active');
+
+    // stop game loops if leaving the game page
+    if(outgoingKey === 'game'){
+      if(typeof rafId !== 'undefined' && rafId){ cancelAnimationFrame(rafId); rafId = null; }
+      if(typeof gameRunning !== 'undefined'){ gameRunning = false; }
+      if(typeof snakeLoopId !== 'undefined' && snakeLoopId){ clearInterval(snakeLoopId); snakeLoopId = null; }
     }
-    window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+
+    if(outgoingKey){ hideView(pages[outgoingKey]); }
+    if(heroVisible && name){ hideView(heroEl); }
+
+    if(name){ document.body.classList.add('view-page'); }
+    else { document.body.classList.remove('view-page'); }
+
+    setTimeout(() => {
+      if(name && pages[name]){
+        showView(pages[name], 'block');
+      } else {
+        showView(heroEl, 'flex');
+      }
+      window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+      isSwitching = false;
+    }, (outgoingKey || heroVisible) ? TRANSITION_MS : 0);
   }
 
   function goHome(){
